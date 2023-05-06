@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "wanu"
+version = "0.1.0"
+description = ""
+authors = ["nozwock <57829219+nozwock@users.noreply.github.com>"]
+license = "GPLv2"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+appdirs = "^1.4.4"
+rich = "^13.3.5"
+PyInquirer = "^1.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
