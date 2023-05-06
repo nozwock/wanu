@@ -14,8 +14,11 @@ def git_checkout(directory: str, rev: str):
     subprocess.run(["git", "checkout", rev], cwd=directory, check=True)
 
 
-# This is useless after bundling the bins in the package
 class BuildTool:
+    """
+    DEAD CODE
+    """
+
     hactool_rev = "c2c907430e674614223959f0377f5e71f9e44a4a"
     hacpack_rev = "7845e7be8d03a263c33430f9e8c2512f7c280c88"
 

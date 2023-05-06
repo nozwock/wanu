@@ -5,6 +5,10 @@ from wanu.defines import APP_CACHE_DIR
 
 
 class Cache:
+    """
+    DEAD CODE
+    """
+
     def __init__(self, dir: Path = APP_CACHE_DIR):
         self.dir = dir
 
