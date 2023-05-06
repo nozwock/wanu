@@ -18,9 +18,6 @@ class BuildTool:
     hactool_rev = "c2c907430e674614223959f0377f5e71f9e44a4a"
     hacpack_rev = "7845e7be8d03a263c33430f9e8c2512f7c280c88"
 
-    def __init__(self):
-        ...
-
     def hacpack(rev: str = hacpack_rev) -> Path:
         kind = "Hacpack"
         print(f"Building {kind}")
