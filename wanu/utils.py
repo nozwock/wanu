@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from typing import Iterable
 from enum import Enum
+import platform
 import subprocess
 import re
 from wanu.defines import HACTOOL
@@ -28,3 +29,13 @@ def get_content_type(rom: Path) -> str:
     if content_type:
         return content_type.group(1).strip()
     raise Exception("Failed to process ContentType")
+
+
+def check_aarch64_linux():
+    system = platform.system()
+    machine = platform.machine()
+
+    if system != "Linux" or machine != "aarch64":
+        raise SystemError(
+            "This script is intended to run on Linux with aarch64 architecture only."
+        )

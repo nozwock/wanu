@@ -9,6 +9,6 @@ PRODKEYS_PATH = SWITCH_DIR.joinpath("prod.keys")
 TITLEKEY_PATH = SWITCH_DIR.joinpath("title.keys")
 
 
-HACPACK = pkg_resources.path(aarch64_linux, "hacpack")
-HACTOOL = pkg_resources.path(aarch64_linux, "hactool")
-HAC2L = pkg_resources.path(aarch64_linux, "hac2l")
+HACPACK = Path(str(pkg_resources.path(aarch64_linux, "hacpack")))
+HACTOOL = Path(str(pkg_resources.path(aarch64_linux, "hactool")))
+HAC2L = Path(str(pkg_resources.path(aarch64_linux, "hac2l")))
