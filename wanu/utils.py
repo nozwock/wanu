@@ -6,25 +6,26 @@ from enum import Enum
 from pathlib import Path
 from typing import Iterable
 
-from wanu.defines import HACTOOL
+from wanu.defines import HACTOOL, TITLEKEY_PATH
 
 
 def get_files_with_ext(from_dir: Path, ext: str) -> Iterable[Path]:
-    for file in os.listdir(from_dir):
-        if file.endswith(ext):
-            yield Path(file)
+    assert from_dir.is_dir()
+    for path in from_dir.rglob(f"*.{ext}"):
+        yield path
 
 
 class ContentType(Enum):
-    Program = (0x00,)
-    Meta = (0x01,)
-    Control = (0x02,)
-    Manual = (0x03,)
-    Data = (0x04,)
-    PublicData = (0x05,)
+    Program = 0x00
+    Meta = 0x01
+    Control = 0x02
+    Manual = 0x03
+    Data = 0x04
+    PublicData = 0x05
 
 
 def get_content_type(rom: Path) -> str:
+    assert rom.is_file()
     output = subprocess.check_output([HACTOOL, rom], universal_newlines=True)
     content_type = re.search(r"Content Type:\s{23}(.*)", output)
     if content_type:
@@ -40,3 +41,12 @@ def check_aarch64_linux():
         raise SystemError(
             "This script is intended to run on Linux with aarch64 architecture only."
         )
+
+
+def clear_titlekeys():
+    try:
+        os.remove(TITLEKEY_PATH)
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        raise e

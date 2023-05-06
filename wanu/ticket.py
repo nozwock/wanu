@@ -3,6 +3,7 @@ import re
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterable
 
 from wanu.defines import SWITCH_DIR, TITLEKEY_PATH
 
@@ -10,25 +11,26 @@ from wanu.defines import SWITCH_DIR, TITLEKEY_PATH
 @dataclass
 class TitleKey:
     rights_id: str
-    title_key: str
+    key: str
 
-    @staticmethod
-    def new(tik_path: Path) -> TitleKey | None:
+    @classmethod
+    def new(cls, tik_file: Path) -> TitleKey | None:
+        assert tik_file.is_file()
         tik_content = subprocess.run(
-            ["xxd", tik_path], capture_output=True, text=True
+            ["xxd", tik_file], capture_output=True, text=True
         ).stdout
-        title_match = re.search(r"(?<=2a0: ).{39}", tik_content)
+        rights_id_match = re.search(r"(?<=2a0: ).{39}", tik_content)
         key_match = re.search(r"(?<=180: ).{39}", tik_content)
 
-        if title_match and key_match:
-            title = title_match.group(0).replace(" ", "")
+        if rights_id_match and key_match:
+            rights_id = rights_id_match.group(0).replace(" ", "")
             key = key_match.group(0).replace(" ", "")
-            return TitleKey(title, key)
+            return cls(rights_id, key)
         return None
 
 
-def store_title_key(keys: list[TitleKey]) -> None:
+def store_title_key(keys: Iterable[TitleKey]) -> None:
     os.makedirs(SWITCH_DIR, exist_ok=True)
     for key in keys:
         with open(TITLEKEY_PATH, "a") as file:
-            file.write(f"{key.rights_id}={key.title_key}")
+            file.write(f"{key.rights_id}={key.key}")

@@ -8,10 +8,11 @@ from wanu.defines import APP_CACHE_DIR
 
 NPROC = os.cpu_count()
 
-# Written by ChatGeeepeet
+# Written by ChatGeeepeet...fixed by me -_-
 
 
-def git_checkout(directory: str, rev: str):
+def git_checkout(directory: Path, rev: str):
+    assert directory.is_dir()
     subprocess.run(["git", "checkout", rev], cwd=directory, check=True)
 
 
@@ -27,91 +28,67 @@ class BuildTool:
     def hacpack(rev: str = hacpack_rev) -> Path:
         kind = "Hacpack"
         print(f"Building {kind}")
-        src_dir = tempfile.TemporaryDirectory()
-
-        try:
-            git_clone = subprocess.run(
-                ["git", "clone", "https://github.com/The-4n/hacPack", src_dir.name],
+        with tempfile.TemporaryDirectory() as src_dir:
+            subprocess.run(
+                ["git", "clone", "https://github.com/The-4n/hacPack", src_dir],
                 check=True,
             )
-            if git_clone.returncode != 0:
-                raise subprocess.CalledProcessError(
-                    git_clone.returncode, git_clone.args
-                )
 
-            git_checkout(src_dir.name, rev)
+            git_checkout(Path(src_dir), rev)
 
             print("Renaming config file")
             shutil.move(
-                os.path.join(src_dir.name, "config.mk.template"),
-                os.path.join(src_dir.name, "config.mk"),
+                os.path.join(src_dir, "config.mk.template"),
+                os.path.join(src_dir, "config.mk"),
             )
 
             print("Running make")
             assert NPROC is not None
-            make = subprocess.run(
-                ["make", "-j", str(NPROC // 2)], cwd=src_dir.name, check=True
-            )
-            if make.returncode != 0:
-                raise subprocess.CalledProcessError(make.returncode, make.args)
+            subprocess.run(["make", "-j", str(NPROC // 2)], cwd=src_dir, check=True)
 
             # Moving bin from temp dir to cache dir
             filename = f"{kind.lower()}"
             os.makedirs(APP_CACHE_DIR, exist_ok=True)
             dest = os.path.join(APP_CACHE_DIR, filename)
-            shutil.move(os.path.join(src_dir.name, filename), dest)
+            shutil.move(os.path.join(src_dir, filename), dest)
 
             return Path(dest)
-        finally:
-            src_dir.cleanup()
 
     @staticmethod
     def hactool(rev: str = hactool_rev) -> Path:
         kind = "Hactool"
         print(f"Building {kind}")
-        src_dir = tempfile.TemporaryDirectory()
-
-        try:
-            git_clone = subprocess.run(
-                ["git", "clone", "https://github.com/SciresM/hactool", src_dir.name],
+        with tempfile.TemporaryDirectory() as src_dir:
+            subprocess.run(
+                ["git", "clone", "https://github.com/SciresM/hactool", src_dir],
                 check=True,
             )
-            if git_clone.returncode != 0:
-                raise subprocess.CalledProcessError(
-                    git_clone.returncode, git_clone.args
-                )
 
-            git_checkout(src_dir.name, rev)
+            git_checkout(Path(src_dir), rev)
 
             print("Renaming config file")
             shutil.move(
-                os.path.join(src_dir.name, "config.mk.template"),
-                os.path.join(src_dir.name, "config.mk"),
+                os.path.join(src_dir, "config.mk.template"),
+                os.path.join(src_dir, "config.mk"),
             )
 
-            # removing line 372 as it causes build to fail on android
+            # Removing line 372 as it causes build to fail on Android
             if os.name == "posix" and os.uname().sysname == "Android":
-                print("Removing line 372 from `main.c`")
-                with open(os.path.join(src_dir.name, "main.c"), "r") as file:
+                print("Removing line 372 from 'main.c'")
+                with open(os.path.join(src_dir, "main.c"), "r") as file:
                     lines = file.readlines()
                     fixed_main = "".join(lines[:371] + lines[372:])
-                with open(os.path.join(src_dir.name, "main.c"), "w") as file:
+                with open(os.path.join(src_dir, "main.c"), "w") as file:
                     file.write(fixed_main)
 
             print("Running make")
             assert NPROC is not None
-            make = subprocess.run(
-                ["make", "-j", str(NPROC // 2)], cwd=src_dir.name, check=True
-            )
-            if make.returncode != 0:
-                raise subprocess.CalledProcessError(make.returncode, make.args)
+            subprocess.run(["make", "-j", str(NPROC // 2)], cwd=src_dir, check=True)
 
             # Moving bin from temp dir to cache dir
             filename = f"{kind.lower()}.bin"
             os.makedirs(APP_CACHE_DIR, exist_ok=True)
             dest = os.path.join(APP_CACHE_DIR, filename)
-            shutil.move(os.path.join(src_dir.name, filename), dest)
+            shutil.move(os.path.join(src_dir, filename), dest)
 
             return Path(dest)
-        finally:
-            src_dir.cleanup()
