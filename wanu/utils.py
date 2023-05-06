@@ -1,10 +1,11 @@
 import os
+import platform
+import re
+import subprocess
+from enum import Enum
 from pathlib import Path
 from typing import Iterable
-from enum import Enum
-import platform
-import subprocess
-import re
+
 from wanu.defines import HACTOOL
 
 

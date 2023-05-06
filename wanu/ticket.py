@@ -1,9 +1,10 @@
-import subprocess
-import re
 import os
-from pathlib import Path
+import re
+import subprocess
 from dataclasses import dataclass
-from wanu.defines import TITLEKEY_PATH, SWITCH_DIR
+from pathlib import Path
+
+from wanu.defines import SWITCH_DIR, TITLEKEY_PATH
 
 
 @dataclass

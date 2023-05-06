@@ -1,6 +1,7 @@
-import shutil
 import logging
+import shutil
 from pathlib import Path
+
 from wanu.defines import APP_CACHE_DIR
 
 

@@ -1,6 +1,8 @@
-import appdirs
-from pathlib import Path
 import importlib.resources as pkg_resources
+from pathlib import Path
+
+import appdirs
+
 from .assets.bin import aarch64_linux
 
 APP_CACHE_DIR = appdirs.user_cache_dir("wanu")
