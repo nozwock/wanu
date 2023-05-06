@@ -3,7 +3,7 @@ import shutil
 import tempfile
 import os
 from pathlib import Path
-from defines import *
+from wanu.defines import APP_CACHE_DIR
 
 NPROC = os.cpu_count()
 
@@ -18,6 +18,7 @@ class BuildTool:
     hactool_rev = "c2c907430e674614223959f0377f5e71f9e44a4a"
     hacpack_rev = "7845e7be8d03a263c33430f9e8c2512f7c280c88"
 
+    @staticmethod
     def hacpack(rev: str = hacpack_rev) -> Path:
         kind = "Hacpack"
         print(f"Building {kind}")
@@ -42,6 +43,7 @@ class BuildTool:
             )
 
             print("Running make")
+            assert NPROC is not None
             make = subprocess.run(
                 ["make", "-j", str(NPROC // 2)], cwd=src_dir.name, check=True
             )
@@ -58,6 +60,7 @@ class BuildTool:
         finally:
             src_dir.cleanup()
 
+    @staticmethod
     def hactool(rev: str = hactool_rev) -> Path:
         kind = "Hactool"
         print(f"Building {kind}")
@@ -91,8 +94,9 @@ class BuildTool:
                     file.write(fixed_main)
 
             print("Running make")
+            assert NPROC is not None
             make = subprocess.run(
-                ["make", "-j", str(os.cpu_count() // 2)], cwd=src_dir.name, check=True
+                ["make", "-j", str(NPROC // 2)], cwd=src_dir.name, check=True
             )
             if make.returncode != 0:
                 raise subprocess.CalledProcessError(make.returncode, make.args)
