@@ -6,6 +6,9 @@ authors = ["nozwock <57829219+nozwock@users.noreply.github.com>"]
 license = "GPLv2"
 readme = "README.md"
 
+# Include bins
+include = ["wanu/assets/bin/*"]
+
 [tool.poetry.dependencies]
 python = "^3.10"
 appdirs = "^1.4.4"
