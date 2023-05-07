@@ -4,10 +4,12 @@ This is a port of [yanu's](https://github.com/nozwock/yanu) NSP update functiona
 
 ## Install
 
-Install in proot using `pip`:
+Install using `pip`:
 ```
 pip install -I git+https://github.com/nozwock/wanu.git
 ```
+
+Can be used on Android through proot in Termux.
 
 ## Usage
 
