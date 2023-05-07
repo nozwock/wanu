@@ -7,8 +7,8 @@ from enum import Enum
 from pathlib import Path
 
 from wanu.defines import HAC2L, HACPACK, HACTOOL, PRODKEYS_PATH
-from wanu.ticket import TitleKey, store_title_key
-from wanu.utils import clear_titlekeys, get_files_with_ext
+from wanu.ticket import TitleKey, clear_titlekeys, store_title_key
+from wanu.utils import get_files_with_ext
 
 NCA_EXT = "[nN][cC][aA]"
 NSP_EXT = "[nN][sS][pP]"
@@ -85,7 +85,7 @@ def update_nsp(
         try:
             # Unpacking FS files from NCA
             unpack_update_nca(base_nca, update_nca, romfs_dir, exefs_dir)
-        except:
+        except Exception:
             pass
 
         assert base_title_key is not None

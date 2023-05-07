@@ -36,3 +36,12 @@ def store_title_key(keys: Iterable[TitleKey]) -> None:
     with open(TITLEKEY_PATH, "a") as file:
         content = "\n".join([f"{key.rights_id}={key.key}" for key in keys])
         file.write(f"{content}")
+
+
+def clear_titlekeys():
+    try:
+        os.remove(TITLEKEY_PATH)
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        raise e

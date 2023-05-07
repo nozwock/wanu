@@ -2,8 +2,8 @@ if __name__ == "__main__":
     import typer
 
     from wanu.updater import update_nsp
-    from wanu.utils import check_aarch64_linux
+    from wanu.utils import validate_system
 
-    check_aarch64_linux()
+    validate_system()
 
     typer.run(update_nsp)

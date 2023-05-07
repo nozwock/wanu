@@ -12,7 +12,7 @@ def get_files_with_ext(from_dir: Path, ext: str) -> Iterator[Path]:
         yield path
 
 
-def check_aarch64_linux():
+def validate_system():
     system = platform.system()
     machine = platform.machine()
 
@@ -20,12 +20,3 @@ def check_aarch64_linux():
         raise SystemError(
             "This script is intended to run on Linux with aarch64 architecture only."
         )
-
-
-def clear_titlekeys():
-    try:
-        os.remove(TITLEKEY_PATH)
-    except FileNotFoundError:
-        pass
-    except Exception as e:
-        raise e
