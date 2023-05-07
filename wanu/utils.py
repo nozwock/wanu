@@ -4,12 +4,12 @@ import re
 import subprocess
 from enum import Enum
 from pathlib import Path
-from typing import Iterable
+from typing import Iterator
 
 from wanu.defines import HACTOOL, TITLEKEY_PATH
 
 
-def get_files_with_ext(from_dir: Path, ext: str) -> Iterable[Path]:
+def get_files_with_ext(from_dir: Path, ext: str) -> Iterator[Path]:
     assert from_dir.is_dir()
     for path in from_dir.rglob(f"*.{ext}"):
         yield path
