@@ -33,6 +33,6 @@ class TitleKey:
 
 def store_title_key(keys: Iterable[TitleKey]) -> None:
     os.makedirs(SWITCH_DIR, exist_ok=True)
-    for key in keys:
-        with open(TITLEKEY_PATH, "a") as file:
-            file.write(f"{key.rights_id}={key.key}")
+    with open(TITLEKEY_PATH, "a") as file:
+        content = "\n".join([f"{key.rights_id}={key.key}" for key in keys])
+        file.write(f"{content}")

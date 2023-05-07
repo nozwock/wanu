@@ -4,7 +4,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from wanu.defines import HAC2L, HACPACK, HACTOOL, TITLEKEY_PATH
+from wanu.defines import HAC2L, HACPACK, HACTOOL, PRODKEYS_PATH
 from wanu.ticket import TitleKey, store_title_key
 from wanu.utils import (
     ContentType,
@@ -16,6 +16,8 @@ from wanu.utils import (
 NCA_EXT = "[nN][cC][aA]"
 NSP_EXT = "[nN][sS][pP]"
 TIK_EXT = "[tT][iI][kK]"
+
+PROGRAMID_LEN = 16
 
 
 def update_nsp(
@@ -43,7 +45,7 @@ def update_nsp(
             next(get_files_with_ext(Path(base_data_dir.name), TIK_EXT))
         )
         update_title_key = TitleKey.new(
-            next(get_files_with_ext(Path(base_data_dir.name), TIK_EXT))
+            next(get_files_with_ext(Path(update_data_dir.name), TIK_EXT))
         )
 
         # Storing TitleKeys file
@@ -91,10 +93,14 @@ def update_nsp(
         assert base_title_key is not None
         if program_id is None:
             program_id = base_title_key.rights_id
+        program_id = program_id[:PROGRAMID_LEN]
 
         # Move Control NCA before cleanup
         os.makedirs(nca_dir.name, exist_ok=True)
-        shutil.move(control_nca, Path(nca_dir.name).joinpath(Path(control_nca).name))
+        old_control_nca = control_nca
+        control_nca = Path(nca_dir.name).joinpath(Path(control_nca).name)
+        shutil.move(old_control_nca, control_nca)
+        del old_control_nca
 
         # Cleanup
         base_data_dir.cleanup()
@@ -125,8 +131,9 @@ def update_nsp(
 
 def unpack_nsp(nsp: Path, to: Path) -> None:
     assert nsp.is_file()
+    assert PRODKEYS_PATH.is_file()
 
-    subprocess.run([HACTOOL, "-t", "pfs0", nsp, to], check=True)
+    subprocess.run([HACTOOL, "-t", "pfs0", nsp, "--outdir", to], check=True)
 
 
 def unpack_update_nca(
@@ -134,6 +141,7 @@ def unpack_update_nca(
 ) -> None:
     assert base_nca.is_file()
     assert update_nca.is_file()
+    assert PRODKEYS_PATH.is_file()
 
     subprocess.run(
         [
@@ -155,10 +163,12 @@ def create_meta_nca(
     program_nca: Path,
     control_nca: Path,
     outdir: Path,
-    keyfile: Path = TITLEKEY_PATH,
+    keyfile: Path = PRODKEYS_PATH,
 ) -> Path:
     assert program_nca.is_file()
+    print(control_nca)
     assert control_nca.is_file()
+    assert keyfile.is_file()
 
     with tempfile.TemporaryDirectory() as temp_outdir:
         subprocess.run(
@@ -196,10 +206,11 @@ def pack_program_nca(
     romfs_dir: Path,
     exefs_dir: Path,
     outdir: Path,
-    keyfile: Path = TITLEKEY_PATH,
+    keyfile: Path = PRODKEYS_PATH,
 ) -> Path:
     assert romfs_dir.is_dir()
     assert exefs_dir.is_dir()
+    assert keyfile.is_file()
 
     with tempfile.TemporaryDirectory() as temp_outdir:
         subprocess.run(
@@ -235,9 +246,10 @@ def pack_nsp(
     program_id: str,
     nca_dir: Path,
     outdir: Path,
-    keyfile: Path = TITLEKEY_PATH,
+    keyfile: Path = PRODKEYS_PATH,
 ):
     assert nca_dir.is_dir()
+    assert keyfile.is_file()
 
     subprocess.run(
         [

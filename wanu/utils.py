@@ -6,7 +6,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Iterator
 
-from wanu.defines import HACTOOL, TITLEKEY_PATH
+from wanu.defines import HACTOOL, PRODKEYS_PATH, TITLEKEY_PATH
 
 
 def get_files_with_ext(from_dir: Path, ext: str) -> Iterator[Path]:
@@ -24,13 +24,18 @@ class ContentType(Enum):
     PublicData = 0x05
 
 
-def get_content_type(rom: Path) -> str:
+def get_content_type(rom: Path) -> str | None:
     assert rom.is_file()
-    output = subprocess.check_output([HACTOOL, rom], universal_newlines=True)
-    content_type = re.search(r"Content Type:\s{23}(.*)", output)
+    assert PRODKEYS_PATH.is_file()
+    output = str(
+        subprocess.run(
+            [HACTOOL, rom], capture_output=True, universal_newlines=True
+        ).stdout
+    )
+    content_type = re.search(r"Content\s*Type:\s*(\S*)", output)
     if content_type:
         return content_type.group(1).strip()
-    raise Exception("Failed to process ContentType")
+    return None
 
 
 def check_aarch64_linux():
