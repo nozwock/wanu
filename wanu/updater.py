@@ -287,7 +287,7 @@ def get_content_type(rom: Path) -> str | None:
     assert PRODKEYS_PATH.is_file()
     output = str(
         subprocess.run(
-            [HACTOOL, rom], capture_output=True, universal_newlines=True
+            [HAC2L, rom], capture_output=True, universal_newlines=True
         ).stdout
     )
     content_type = CONTENT_TYPE_PAT.search(output)
