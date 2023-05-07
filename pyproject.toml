@@ -9,6 +9,9 @@ readme = "README.md"
 # Include bins
 include = ["wanu/assets/bin/*"]
 
+[tool.poetry.scripts]
+wanu = 'wanu.__main__:run'
+
 [tool.poetry.dependencies]
 python = "^3.10"
 appdirs = "^1.4.4"
