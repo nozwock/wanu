@@ -15,5 +15,5 @@ Can be used on Android through proot in Termux.
 
 Get the help message using:
 ```
-python3 -m wanu --help
+wanu --help
 ```
