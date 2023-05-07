@@ -1,4 +1,6 @@
-This is port of a part of `yanu`'s functionality but in snek. Bcz i was bored.
+This is a port of [yanu's](https://github.com/nozwock/yanu) NSP update functionality, implemented in snek simply because I was bored.
+
+> **Note** - Only supports **aarch64-linux** bcz I'm lazy
 
 ## Install
 
@@ -9,7 +11,7 @@ pip install -I git+https://github.com/nozwock/wanu.git
 
 ## Usage
 
-Get a help message using:
+Get the help message using:
 ```
 python3 -m wanu --help
 ```
