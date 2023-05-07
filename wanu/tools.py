@@ -86,7 +86,7 @@ class BuildTool:
             subprocess.run(["make", "-j", str(NPROC // 2)], cwd=src_dir, check=True)
 
             # Moving bin from temp dir to cache dir
-            filename = f"{kind.lower()}.bin"
+            filename = f"{kind.lower()}"
             os.makedirs(APP_CACHE_DIR, exist_ok=True)
             dest = os.path.join(APP_CACHE_DIR, filename)
             shutil.move(os.path.join(src_dir, filename), dest)

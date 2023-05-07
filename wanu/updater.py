@@ -1,23 +1,21 @@
 import os
+import re
 import shutil
 import subprocess
 import tempfile
+from enum import Enum
 from pathlib import Path
 
 from wanu.defines import HAC2L, HACPACK, HACTOOL, PRODKEYS_PATH
 from wanu.ticket import TitleKey, store_title_key
-from wanu.utils import (
-    ContentType,
-    clear_titlekeys,
-    get_content_type,
-    get_files_with_ext,
-)
+from wanu.utils import clear_titlekeys, get_files_with_ext
 
 NCA_EXT = "[nN][cC][aA]"
 NSP_EXT = "[nN][sS][pP]"
 TIK_EXT = "[tT][iI][kK]"
 
 PROGRAMID_LEN = 16
+CONTENT_TYPE_PAT = re.compile(r"Content\s*Type:\s*(\S*)")
 
 
 def update_nsp(
@@ -273,3 +271,26 @@ def pack_nsp(
         return packed_nsp
 
     raise Exception("Encountered an error while packing NCAs to NSP")
+
+
+class ContentType(Enum):
+    Program = 0x00
+    Meta = 0x01
+    Control = 0x02
+    Manual = 0x03
+    Data = 0x04
+    PublicData = 0x05
+
+
+def get_content_type(rom: Path) -> str | None:
+    assert rom.is_file()
+    assert PRODKEYS_PATH.is_file()
+    output = str(
+        subprocess.run(
+            [HACTOOL, rom], capture_output=True, universal_newlines=True
+        ).stdout
+    )
+    content_type = CONTENT_TYPE_PAT.search(output)
+    if content_type:
+        return content_type.group(1).strip()
+    return None
